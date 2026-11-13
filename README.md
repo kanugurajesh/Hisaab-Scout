@@ -74,7 +74,7 @@ flowchart LR
 - **Degrades gracefully:** if Groq is down, or the key is missing or expired, the import still returns the structured fields with an `ai_unavailable` warning.
 - **Contract-first:** `openapi.json` is generated from the code, and CI fails on drift.
 
-Full write-up with sequence and decision diagrams: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Full write-up, with diagrams of the request lifecycle, the import pipeline, the vendor verdict and the CI pipeline: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Quick start
 
