@@ -8,7 +8,7 @@
 | 🧾 | **`POST /v1/vendors/check`**: check the GSTIN printed on a bill | A bill can add up and still be from a shop that doesn't exist |
 | 🔎 | **`scout-research`**: turn app reviews into a theme report with verbatim quotes | PRDs backed by hundreds of users, not one interview |
 
-📄 [PRD](docs/PRD.md) · 📊 [Eval report](eval/report.md) · 🔎 [First research report: Splitwise reviews](reports/splitwise-playstore.md) · 📜 [API contract (`openapi.json`)](openapi.json)
+📄 [PRD](docs/PRD.md) · 🏗️ [Architecture](docs/ARCHITECTURE.md) · 📊 [Eval report](eval/report.md) · 🔎 [First research report: Splitwise reviews](reports/splitwise-playstore.md) · 📜 [API contract (`openapi.json`)](openapi.json)
 
 ## How it decides what to trust
 
@@ -26,6 +26,8 @@ pasted link ──► safe fetch ──► schema.org Event data ─── high 
                                       ▼
                                warnings + needs_confirmation ──► Hisaab's form, prefilled
 ```
+
+Module layout, request lifecycle and the vendor and research flows are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 The model reads, and code decides. It's the same rule Hisaab uses for payment screenshots and bills:
 - the model never sets a confidence level;
