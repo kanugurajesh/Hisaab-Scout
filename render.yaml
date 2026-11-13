@@ -1,0 +1,24 @@
+# Free public demo on Render. Render → New → Blueprint → pick this repo, then fill in the secrets it asks for.
+# Hisaab's server calls this with SCOUT_API_KEYS; copy the generated key into Hisaab's SCOUT_API_KEY.
+services:
+  - type: web
+    name: hisaab-scout
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: SCOUT_API_KEYS
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_TEXT_MODEL
+        value: openai/gpt-oss-120b
+      - key: AI_MOCK
+        value: "false"
+      # Demo registry so vendor checks show every verdict. Responses say "Demo registry".
+      - key: GST_REGISTRY
+        value: fixture

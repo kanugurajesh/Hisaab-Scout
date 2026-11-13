@@ -1,0 +1,838 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "hisaab-scout",
+    "summary": "Reads public web pages for Hisaab.",
+    "description": "Imports an event from a link, and checks the vendor on a bill. Every value read by AI comes with the words on the page it came from, and code decides what's kept.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/events/import": {
+      "post": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Read an event page and return the fields for a new collection",
+        "operationId": "import_event_v1_events_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vendors/check": {
+      "post": {
+        "tags": [
+          "vendors"
+        ],
+        "summary": "Check the GSTIN printed on a bill",
+        "operationId": "vendor_check_v1_vendors_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VendorCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorCheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Check": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "format",
+              "checksum",
+              "state_code",
+              "registered",
+              "active_on_bill_date",
+              "name_matches"
+            ],
+            "title": "Id"
+          },
+          "passed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Passed",
+            "description": "null = couldn't be checked (no registry configured)"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "passed",
+          "message"
+        ],
+        "title": "Check"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "upstream_status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upstream Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorBody"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse"
+      },
+      "Extracted_date_": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date",
+            "title": "Value"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "jsonld",
+              "microdata",
+              "opengraph",
+              "meta",
+              "llm"
+            ],
+            "title": "Source"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium"
+            ],
+            "title": "Confidence"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "source",
+          "confidence"
+        ],
+        "title": "Extracted[date]"
+      },
+      "Extracted_int_": {
+        "properties": {
+          "value": {
+            "type": "integer",
+            "title": "Value"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "jsonld",
+              "microdata",
+              "opengraph",
+              "meta",
+              "llm"
+            ],
+            "title": "Source"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium"
+            ],
+            "title": "Confidence"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "source",
+          "confidence"
+        ],
+        "title": "Extracted[int]"
+      },
+      "Extracted_str_": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "jsonld",
+              "microdata",
+              "opengraph",
+              "meta",
+              "llm"
+            ],
+            "title": "Source"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium"
+            ],
+            "title": "Confidence"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "source",
+          "confidence"
+        ],
+        "title": "Extracted[str]"
+      },
+      "ImportRequest": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "minLength": 4,
+            "title": "Url",
+            "examples": [
+              "https://lu.ma/diwali-tower-b"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "ImportRequest"
+      },
+      "ImportResponse": {
+        "properties": {
+          "found": {
+            "type": "boolean",
+            "title": "Found",
+            "description": "True when the page has an event name and a date, venue or price"
+          },
+          "event": {
+            "$ref": "#/components/schemas/ImportedEvent"
+          },
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/ImportedEvent"
+            },
+            "type": "array",
+            "title": "Alternatives",
+            "description": "Other events on the same page, best first, at most 9"
+          },
+          "needs_confirmation": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Needs Confirmation",
+            "description": "Form fields worth a second look: anything not read from the page's structured data"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/ImportWarning"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "final_url": {
+            "type": "string",
+            "title": "Final Url"
+          },
+          "used_ai": {
+            "type": "boolean",
+            "title": "Used Ai"
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "found",
+          "event",
+          "source_url",
+          "final_url",
+          "used_ai"
+        ],
+        "title": "ImportResponse"
+      },
+      "ImportWarning": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "event_in_past",
+              "event_far_future",
+              "event_cancelled",
+              "event_postponed",
+              "online_event",
+              "free_event",
+              "several_prices",
+              "not_rupees",
+              "rounded_amount",
+              "timezone_assumed",
+              "several_events",
+              "login_wall",
+              "ai_unavailable",
+              "instructions_for_ai"
+            ],
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ImportWarning"
+      },
+      "ImportedEvent": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_str_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "date": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_date_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_time": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_str_"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"HH:MM\", 24-hour, IST"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_str_"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "One line, at most 200 characters"
+          },
+          "per_head_amount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_int_"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Whole rupees"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_str_"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "At most 500 characters"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_str_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "organizer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Extracted_str_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ImportedEvent",
+        "description": "Everything is optional: a page may give only some of it. The organizer confirms before saving."
+      },
+      "RegistryInfo": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "checked",
+              "not_found",
+              "not_configured",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source",
+            "description": "\"demo_fixture\" means demo data, not the real registry"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          },
+          "trade_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trade Name"
+          },
+          "registration_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Status"
+          },
+          "registered_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registered On"
+          },
+          "cancelled_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled On"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "RegistryInfo"
+      },
+      "VendorCheckRequest": {
+        "properties": {
+          "gstin": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Gstin",
+            "examples": [
+              "36AABCS1234L1Z5"
+            ]
+          },
+          "vendor_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Name",
+            "description": "The shop name as printed on the bill"
+          },
+          "bill_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bill Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gstin"
+        ],
+        "title": "VendorCheckRequest"
+      },
+      "VendorCheckResponse": {
+        "properties": {
+          "gstin": {
+            "type": "string",
+            "title": "Gstin",
+            "description": "As checked: upper case, spaces removed"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "format_ok",
+              "mismatch",
+              "invalid"
+            ],
+            "title": "Verdict",
+            "description": "verified: the registry confirms it. format_ok: the number is well-formed but no registry was checked. mismatch: registered, but the name or dates disagree with the bill. invalid: this number can't be a real GSTIN, or isn't registered."
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/Check"
+            },
+            "type": "array",
+            "title": "Checks"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "entity_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Type"
+          },
+          "suggested_gstin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Gstin",
+            "description": "A likely misreading that would make it valid"
+          },
+          "registry": {
+            "$ref": "#/components/schemas/RegistryInfo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gstin",
+          "verdict",
+          "summary",
+          "checks",
+          "registry"
+        ],
+        "title": "VendorCheckResponse"
+      }
+    }
+  }
+}

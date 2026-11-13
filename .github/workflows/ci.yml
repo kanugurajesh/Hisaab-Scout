@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.5"
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run pytest
+      # Structured-data pages and GSTIN checks need no model, so their gates run on every push.
+      - run: uv run python eval/run.py --no-ai --out eval-ci.md
+      - name: API contract matches openapi.json
+        run: uv run python scripts/export_openapi.py --check

@@ -1,0 +1,45 @@
+{
+  "_note": "DEMO DATA. Made-up businesses for the demo and tests. Not the GST registry; any match with a real GSTIN is a coincidence.",
+  "records": [
+    {
+      "gstin": "36AGXPG4821K1ZX",
+      "legal_name": "Lakshmi Narayana Gupta",
+      "trade_name": "Sri Lakshmi Sweets",
+      "status": "Active",
+      "registered_on": "2019-06-12",
+      "cancelled_on": null
+    },
+    {
+      "gstin": "36AAHFB7731C1ZP",
+      "legal_name": "Balaji Tent House",
+      "trade_name": "Balaji Tent House",
+      "status": "Active",
+      "registered_on": "2018-01-20",
+      "cancelled_on": null
+    },
+    {
+      "gstin": "36BRCPR5517M1ZC",
+      "legal_name": "Ramesh Chandra Reddy",
+      "trade_name": "Royal Caterers",
+      "status": "Cancelled",
+      "registered_on": "2017-09-01",
+      "cancelled_on": "2025-03-31"
+    },
+    {
+      "gstin": "29AAKFK3390P1ZI",
+      "legal_name": "Kalpana Decorators LLP",
+      "trade_name": "Kalpana Flower Decorators",
+      "status": "Active",
+      "registered_on": "2026-08-01",
+      "cancelled_on": null
+    },
+    {
+      "gstin": "36AADCA6612H1ZW",
+      "legal_name": "Annapurna Fresh Mart Private Limited",
+      "trade_name": "Annapurna Fresh Mart",
+      "status": "Active",
+      "registered_on": "2017-07-01",
+      "cancelled_on": null
+    }
+  ]
+}
